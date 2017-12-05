@@ -35,6 +35,14 @@ defmodule LifeBloom.Bloom do
 
   @doc """
   Initialize the curry with one argument fixed.
+
+      iex> import LifeBloom.Bloom
+      ...> state = 6
+      ...> seed = sow(fn x, y, z -> x + y + z end, 3)
+      ...> seed = nurish seed, 2
+      ...> state |> bloom(seed)
+      11
+
   """
   @spec sow(seed, nurishment) :: sapling
   def sow(seed, nurishment) do
@@ -100,7 +108,7 @@ defmodule LifeBloom.Bloom do
 
   defp plant(seed, nurishments) do
     {_, arity} = :erlang.fun_info(seed, :arity)
-    plant seed, arity, nurishments
+    plant seed, arity - length(nurishments), nurishments
   end
 
   defp plant(seed, 0, [head | tail]) do
