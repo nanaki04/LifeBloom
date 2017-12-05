@@ -1,6 +1,7 @@
 # LifeBloom
 
-**TODO: Add description**
+This library provides pipelined function composition and currying,
+with cryptic module and function names to make everyones life that much harder.
 
 ## Installation
 
