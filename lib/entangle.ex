@@ -34,8 +34,8 @@ defmodule LifeBloom.Entangle do
       Module.register_attribute __MODULE__, :vitalizers, []
       @raindrops Keyword.get(opts, :raindrops, [])
       @vitalizers Keyword.get(opts, :vitalizers, [])
-      Enum.all? @raindrops, fn raindrop -> raindrop.init(__MODULE__) == :ok end
-      Enum.all? @vitalizers, fn vitalizer -> vitalizer.init(__MODULE__) == :ok end
+      true = Enum.all? @raindrops, fn raindrop -> :ok == raindrop.init(__MODULE__) end
+      true = Enum.all? @vitalizers, fn vitalizer -> :ok == vitalizer.init(__MODULE__) end
     end
   end
 

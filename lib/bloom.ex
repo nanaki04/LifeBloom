@@ -36,6 +36,8 @@ defmodule LifeBloom.Bloom do
   @doc """
   Initialize the curry with one argument fixed.
 
+  ## Examples
+
       iex> import LifeBloom.Bloom
       ...> state = 6
       ...> seed = sow(fn x, y, z -> x + y + z end, 3)
