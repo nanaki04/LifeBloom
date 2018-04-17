@@ -1,19 +1,18 @@
 defmodule LifeBloom.Bloom do
   @moduledoc """
-  The Bloom module implements a currying system tailored towards Elixir.
-  This means, the FINAL argument that will cause the function to be applied,
-  will be used as the FIRST argument for the function.
-
-  This is a design decision as in elixir, the most significant argument,
-  or state, is pushed through pipelines as the first argument of its
-  transforming functions. Therefore, presumably functions will be written
-  with the state as first argument, and specific modifiers or options following thereafter.
+  The Bloom module implements a currying system.
+  To be used smoothly with Elixir, I have provided the option to provide the first argument,
+  in elixir usually the most important state, provided with the pipe operator, as the final curried argument.
   """
 
   @type tree :: any
   @type seed :: fun
   @type nurishment :: any
   @type sapling :: seed | tree
+  @type order :: :normal
+    | :state_first
+  @type option :: {:order, order}
+  @type options :: [option]
 
   @doc """
   The sow function is used to initialize the curry.
@@ -71,17 +70,28 @@ defmodule LifeBloom.Bloom do
   Provide the curry with an argument.
   Alternatively you can call the curry by yourself.
 
+  When all arguments are provided the function will be executed.
+
   ## Examples
 
       iex> import LifeBloom.Bloom
       ...> state = "hi"
       ...> seed = sow fn x, y -> x <> y end
       ...> nurishedSeed = nurish seed, " lol"
-      ...> curriedFunction = seed.(" lol")
-      ...> nurishedResult = state |> bloom(nurishedSeed)
-      ...> curriedResult = curriedFunction.(state)
-      ...> nurishedResult == curriedResult
-      true
+      ...> state |> bloom(nurishedSeed)
+      "hi lol"
+
+      iex> import LifeBloom.Bloom
+      ...> seed = sow fn x, y -> x <> y end
+      ...> curriedFunction = seed.("hi")
+      ...> curriedFunction.(" lol")
+      "hi lol"
+
+      iex> import LifeBloom.Bloom
+      ...> seed = sow fn x, y -> x <> y end
+      ...> nurishedSeed = nurish seed, "hi"
+      ...> nurish nurishedSeed, " lol"
+      "hi lol"
 
   """
   @spec nurish(seed, nurishment) :: sapling
@@ -105,7 +115,7 @@ defmodule LifeBloom.Bloom do
   """
   @spec bloom(nurishment, seed) :: tree
   def bloom(finalNurishment, seed) do
-    seed.(finalNurishment)
+    seed.({finalNurishment, [order: :state_first]})
   end
 
   defp plant(seed, nurishments) do
@@ -113,12 +123,12 @@ defmodule LifeBloom.Bloom do
     plant seed, arity - length(nurishments), nurishments
   end
 
-  defp plant(seed, 0, [head | tail]) do
+  defp plant(seed, 0, [{head, [order: :state_first]} | tail]) do
     apply seed, [head | Enum.reverse tail]
   end
 
   defp plant(seed, 0, nurishment) do
-    apply seed, nurishment
+    apply seed, Enum.reverse nurishment
   end
 
   defp plant(seed, arity, nurishments) do
