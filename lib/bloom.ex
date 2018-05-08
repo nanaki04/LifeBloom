@@ -55,15 +55,24 @@ defmodule LifeBloom.Bloom do
   """
   @spec sow(seed, nurishment, nurishment) :: sapling
   def sow(seed, nurishment1, nurishment2) do
-    plant seed, [nurishment1, nurishment2]
+    plant seed, [nurishment2, nurishment1]
   end
 
   @doc """
   Initialize the curry with three argument fixed.
+
+  ## Examples
+
+      iex> import LifeBloom.Bloom
+      ...> state = 6
+      ...> seed = sow(fn x, y, z -> x <> y <> z end, "x", "y")
+      ...> seed = nurish seed, "z"
+      "xyz"
+
   """
   @spec sow(seed, nurishment, nurishment, nurishment) :: sapling
   def sow(seed, nurishment1, nurishment2, nurishment3) do
-    plant seed, [nurishment1, nurishment2, nurishment3]
+    plant seed, [nurishment3, nurishment2, nurishment1]
   end
 
   @doc """
